@@ -1,8 +1,5 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-#*.py[cod]
-#*$py.class
-
+NNsurv_*.py
+data/*
 # C extensions
 *.so
 
