@@ -127,3 +127,6 @@ dmypy.json
 
 # Keras NN
 *.h5
+
+# Ruche
+*.o*
