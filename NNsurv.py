@@ -196,6 +196,13 @@ dil_valid_2d = np.repeat(dil_valid, dil_valid.shape[1], axis = 0)
 dil_test_2d = np.repeat(dil_test, dil_test.shape[1], axis = 0)
 dil_train_valid_2d = np.concatenate((dil_train_2d, dil_valid_2d), axis = 0)
 dil_train_valid = np.concatenate((dil_train, dil_valid), axis = 0)
+pos_na = np.where(np.isnan(dil_train_2d))
+dil_train_2d[pos_na]=-1
+#print(dil_train_2d)
+print(dil_train_2d.shape)
+pos_na = np.where(np.isnan(dil_valid_2d))
+dil_valid_2d[pos_na]=-1
+dil_train_valid_2d = np.concatenate((dil_train_2d, dil_valid_2d), axis = 0)
 
 
 x_train_2d, x_valid_2d, x_test_2d = create_x_long(x, ytime, pas=100)
@@ -322,7 +329,7 @@ for k in np.arange(5):
     ## pas de early stopping
     #early_stopping = EarlyStopping(monitor='val_loss', patience=2) #cindex_score
     early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights = True, verbose = 2, min_delta = 0.0002)
-    history_cv = model_cv.fit(x_train_NN, y_train_NN, batch_size=BSLambda[h][0], epochs=5, validation_data = (x_valid_NN, y_valid_NN), callbacks=[early_stopping])
+    history_cv = model_cv.fit(x_train_NN, y_train_NN, batch_size=BSLambda[h][0], epochs=500, validation_data = (x_valid_NN, y_valid_NN), callbacks=[early_stopping])
     dict_cv_model[key] = model_cv
     dict_cv_history[key] = history_cv.history
     ypred_train_NN = model_cv.predict_proba(x_train_NN)
@@ -369,6 +376,7 @@ plt.rc('axes', facecolor = "white", linewidth = 1,
        grid = False, edgecolor = "black", titlesize = fs, labelsize = fs)
 plt.rc('font', size = fs)
 plt.rc('xtick', labelsize = fs)
+plt.rc('xtick', labelsize = fs)
 plt.rc('ytick', labelsize = fs)
 plt.rc('legend', fontsize = fs)
 plt.rc('figure', titlesize = fs, figsize = (15, 10))
@@ -410,21 +418,22 @@ best_model = "my_best_model_KIRC_" + str(h) + ".h5"
 for k in np.arange(5):
     model = create_model('sigmoid', hn, BSLambda[h][1], 0.0, 0.0, 'l2', 0.0001, 'adam', seed = k)
     history=model.fit(x_inputs_train, dil_train_2d, batch_size=BSLambda[h][0], epochs=500, validation_data = (x_inputs_valid, dil_valid_2d))
-    for layer in model.layers:
-        g=layer.get_config()
-        w=layer.get_weights()
-        print (g)
-        print (w)
+    #for layer in model.layers:
+    #    g=layer.get_config()
+    #    w=layer.get_weights()
+    #    print (g)
+    #    print (w)
     y_pred=model.predict_proba(x_inputs_train,verbose=0)
     y_pred_surv = y_pred.reshape([data_train.shape[0],-1])
     y_pred_train_surv = np.cumprod((1-y_pred_surv), axis = 1)
-    n_test = x_test_sep.shape[0]
+    #n_test = x_test_sep.shape[0]
     oneyr_surv_train = y_pred_train_surv[:,50]
     y_pred_valid=model.predict_proba(x_inputs_valid,verbose=0)
     y_pred_surv_valid = y_pred_valid.reshape([data_valid.shape[0],-1])
     y_pred_valid_surv = np.cumprod((1-y_pred_surv_valid), axis = 1)
-    n_test = x_test_sep.shape[0]
+    #n_test = x_test_sep.shape[0]
     oneyr_surv_valid = y_pred_valid_surv[:,50]
+    surv_valid = pd.DataFrame(np.transpose(y_pred_valid_surv))
     ev_actual = EvalSurv(surv_valid, data_valid['time'].values, data_valid['dead'].values, censor_surv='km')
     cindex_actual = ev_actual.concordance_td()
     if cindex_actual > cindex_max:
@@ -435,10 +444,10 @@ for k in np.arange(5):
     ev_train = EvalSurv(surv_train, data_train['time'].values, data_train['dead'].values, censor_surv='km')
     ci_cv_train.append(ev_train.concordance_td())
     ci_cv_valid.append(cindex_actual)
-    perm = np.arange(n_test)
-    np.random.shuffle(perm)
-    y_pred_test=model.predict_proba(x_inputs_test_sep,verbose=0)
-    y_pred_surv_test_sep = y_pred_test.reshape([data_test_sep.shape[0],-1])
+    #perm = np.arange(n_test)
+    #np.random.shuffle(perm)
+    y_pred_test=model.predict_proba(x_inputs_test,verbose=0)
+    y_pred_surv_test_sep = y_pred_test.reshape([data_test.shape[0],-1])
     y_pred_test_surv = np.cumprod((1-y_pred_surv_test_sep), axis = 1)#[np.cumprod(1-y_pred_surv_test_sep[i]) for i in np.arange(len(y_pred_surv_test_sep))]#np.cumprod(1-y_pred_test, axis
     print(y_pred_test_surv)
     print(y_pred_test_surv.shape)
@@ -447,7 +456,7 @@ for k in np.arange(5):
     surv_test = pd.DataFrame(np.transpose(y_pred_test_surv))
     surv_test.index = interval_l
     #ci_cv_train.append(concordance_index(data_train.time,oneyr_surv_train))
-    ev_test = EvalSurv(surv_test, data_test_sep['time'].values, data_test_sep['dead'].values, censor_surv='km')
+    ev_test = EvalSurv(surv_test, data_test['time'].values, data_test['dead'].values, censor_surv='km')
     ci_cv_test.append(ev_test.concordance_td())
 
 print("------best model--------")

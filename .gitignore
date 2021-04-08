@@ -1,5 +1,5 @@
 NNsurv_*.py
-data/*
+data/*_all.csv
 # C extensions
 *.so
 
@@ -124,3 +124,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Keras NN
+*.h5
