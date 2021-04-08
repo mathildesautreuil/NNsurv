@@ -483,14 +483,14 @@ surv_valid = pd.DataFrame(np.transpose(y_pred_valid_surv))
 surv_valid.index = interval_l
 best_ctd_valid = EvalSurv(surv_valid, data_valid['time'].values, data_valid['dead'].values, censor_surv='km').concordance_td()
 
-y_pred_test=model.predict_proba(x_inputs_test_sep,verbose=0)
-y_pred_surv_test_sep = y_pred_test.reshape([data_test_sep.shape[0],-1])
-y_pred_test_surv = np.cumprod((1-y_pred_surv_test_sep), axis = 1)
+y_pred_test=model.predict_proba(x_inputs_test,verbose=0)
+y_pred_surv_test = y_pred_test.reshape([data_test.shape[0],-1])
+y_pred_test_surv = np.cumprod((1-y_pred_surv_test), axis = 1)
 oneyr_surv_test = y_pred_test_surv[:,50]
-best_cindex_test = concordance_index(data_test_sep.time,oneyr_surv_test)
+best_cindex_test = concordance_index(data_test.time,oneyr_surv_test)
 surv_test = pd.DataFrame(np.transpose(y_pred_test_surv))
 surv_test.index = interval_l
-best_ctd_test = EvalSurv(surv_test, data_test_sep['time'].values, data_test_sep['dead'].values, censor_surv='km').concordance_td()
+best_ctd_test = EvalSurv(surv_test, data_test['time'].values, data_test['dead'].values, censor_surv='km').concordance_td()
 
 print("------")
 print("-------------------------------------------")
