@@ -211,6 +211,9 @@ x_train_2d, x_valid_2d, x_test_2d = create_x_long(x, ytime, pas=100)
 
 ## x_long_test_sep
 pas = 100
+tau = np.max(ytime)  # + 0.0001
+interval_l = tau * (1. / pas) * np.arange(start = 0, stop = pas)
+
 
 # Creation of dataframes
 data_train = np.concatenate((ytime_train, ystatus_train, x_train), axis = 1)
