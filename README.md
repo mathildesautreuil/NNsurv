@@ -2,7 +2,7 @@
 Neural networks based on a discrete-time model to predict the survival duration
 
 ## Introduction
-Three versions of Neural networks based on a discrete-time model:
+Three versions of Neural networks based on a discrete-time model to predict the survival duration are available in this package:
 
       - NNsurv (version 1): basic structure as proposed by biganzoli *et al* (adding cross-validation procedure)
       
