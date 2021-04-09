@@ -372,7 +372,7 @@ for k in np.arange(5):
     #scores_train += cindex_CV_score(Ytrain, ypred_train)
 
 
-save_loss_png = "loss_cv_" + str(h) + "_n200_pp10.png"
+save_loss_png = "loss_cv_" + str(h) + "_KIRC.png"
 import seaborn as sns
 fs = 20
 plt.rc('axes', facecolor = "white", linewidth = 1,
@@ -393,8 +393,11 @@ for i in range(0,len(keys)):
              color = get_color(i), label = keys[i]+"_train")
     plt.plot(dict_cv_history[keys[i]]['val_loss'],
              linestyle = "--", color = get_color(i), label = keys[i]+"_valid")
+loss_max = max([max(dict_cv_history[_]['loss']) for _ in keys])
+val_loss_max = loss_max = max([max(dict_cv_history[_]['val_loss']) for _ in keys])
+lmax = max(loss_max, val_loss_max)
 plt.xlim(0, 499)
-plt.ylim(0, 2000)
+plt.ylim(0, lmax)
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.legend(loc = "best", fontsize = 10)
@@ -525,15 +528,15 @@ print("Ctd_test : ", best_ctd_test)
 ci_train = np.mean(ci_cv_train)
 ci_test = np.mean(ci_cv_test)
 
-file = open('res/fichier_KIRC_vf.csv','a')
+file = open('output/fichier_KIRC_vf.csv','a')
 file.write(str(h) + "_10_2e-4," + 'sigmoid' + "," + str(hn) + "," + str(BSLambda[h][0]) + "," + str(BSLambda[h][1]) + ","  + "0.0" + "," + "0.0" + "," + "l2" + "," + "0.0001" + "," + "adam"+","+ str(scores_train) +","+ str(scores_test) + ","+ str(best_cindex_train) + "," + str(best_cindex_test) + "\n")
 #'str(h) + "," + str(cv_res[0]) + "," + str(cv_res[1]) + ","+ str(cv_res[2]) + "," + str(cv_res[3]) + "," + str(cv_res[4]) + ","+ str(cv_res[5]) + ","+ str(cv_res[6]) + ","+ str(cv_res[7]) + ","+ str(scores_train) +","+ str(scores_test) + ","+ str(ci_train) + "," + str(ci_test) + "\n")
 file.close()
 
 ## to add to NNsurv files on fusion
-file_preds_train = "res/pred_files/preds_NNsurv_KIRC_vf_" + str(h) + ".csv"
+file_preds_train = "output/pred_files/preds_NNsurv_KIRC_vf_" + str(h) + ".csv"
 #file_preds_test = "DATA/res/preds_NNsurv_test_CM_" + str(j) + ".csv"
-file_preds_test = "res/pred_files/preds_NNsurv_KIRC_vf_" + str(h) + ".csv"
+file_preds_test = "output/pred_files/preds_NNsurv_KIRC_vf_" + str(h) + ".csv"
 df_preds_NNsurv = pd.DataFrame(y_pred_test_surv)
 df_preds_NNsurv_train = pd.DataFrame(y_pred_surv)
 #g0 = np.arange(0,pas)
