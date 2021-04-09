@@ -1,3 +1,10 @@
+#Neural network based on a discrete time model (version 1)
+# Ridge Regularization
+# binary censoring indicator
+#
+#Author: Mathilde Sautreuil, CentraleSupélec, mathilde.sautreuil@gmail.com
+#Python version 3.9.2 and Keras version ? (using TensorFlow backend)
+
 # NNsurv
 #This is a package for running the neural network based a discrete-time model (version 1).
 
