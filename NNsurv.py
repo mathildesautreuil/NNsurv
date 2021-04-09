@@ -372,7 +372,7 @@ for k in np.arange(5):
     #scores_train += cindex_CV_score(Ytrain, ypred_train)
 
 
-save_loss_png = "loss_cv_" + str(h) + "_KIRC.png"
+save_loss_png = "output/loss_cv_" + str(h) + "_KIRC.png"
 import seaborn as sns
 fs = 20
 plt.rc('axes', facecolor = "white", linewidth = 1,
