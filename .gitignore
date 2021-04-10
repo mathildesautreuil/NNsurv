@@ -1,4 +1,5 @@
 NNsurv_*.py
+NNsurv/
 data/*_all.csv
 # C extensions
 *.so
